@@ -8,21 +8,21 @@ import (
 func TestMake3D(t *testing.T) {
 	fmt.Printf("Testing Make3D..\n")
 
-	v := make3D([]float64{0.0, 0.0, 0.0})
+	v := make3D([]float32{0.0, 0.0, 0.0})
 
 	r := v.(vector3d)
 	if r[0] != 0.0 || r[1] != 0.0 || r[2] != 0.0 {
 		t.Errorf("Fail Make3D(0.0, 0.0, 0.0")
 	}
 
-	v = make3D([]float64{1.0, 1.0, 1.0})
+	v = make3D([]float32{1.0, 1.0, 1.0})
 
 	r = v.(vector3d)
 	if r[0] != 1.0 || r[1] != 1.0 || r[2] != 1.0 {
 		t.Errorf("Fail Make3D(1.0, 1.0, 1.0")
 	}
 
-	v = make3D([]float64{-1.0, -1.0, -1.0})
+	v = make3D([]float32{-1.0, -1.0, -1.0})
 
 	r = v.(vector3d)
 	if r[0] != -1.0 || r[1] != -1.0 || r[2] != -1.0 {
@@ -59,7 +59,7 @@ func TestLen3d(t *testing.T) {
 func TestRaw3D(t *testing.T) {
 	fmt.Printf("Testing Raw3D..\n")
 
-	v := make3D([]float64{1.0, 2.0, 3.0})
+	v := make3D([]float32{1.0, 2.0, 3.0})
 
 	a := v.Raw()
 	if a[0] != 1.0 || a[1] != 2.0 || a[2] != 3.0 {
@@ -77,7 +77,7 @@ func TestRaw3D(t *testing.T) {
 func TestGet3D(t *testing.T) {
 	fmt.Printf("Testing Get3D..\n")
 
-	v := make3D([]float64{1.0, 2.0, 3.0})
+	v := make3D([]float32{1.0, 2.0, 3.0})
 	if v.Get(0) != 1.0 || v.Get(1) != 2.0 || v.Get(2) != 3.0 {
 		t.Errorf("Fail Get3D<Vector>(1.0, 2.0, 3.0)")
 	}

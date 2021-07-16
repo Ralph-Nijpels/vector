@@ -7,25 +7,25 @@ import (
 // Vector implements a simple mathematical vector
 type Vector interface {
 	Unit() Vector
-	Abs() float64
-	Cbd() float64
+	Abs() float32
+	Cbd() float32
 	Add(w Vector) Vector
 	Sub(w Vector) Vector
 	Min(w Vector) Vector
 	MinD() int
 	Max(w Vector) Vector
 	MaxD() int
-	Muls(s float64) Vector
-	Divs(s float64) Vector
+	Muls(s float32) Vector
+	Divs(s float32) Vector
 	Len() int
-	Raw() []float64
-	Get(i int) float64
-	Set(i int, f float64) Vector
+	Raw() []float32
+	Get(i int) float32
+	Set(i int, f float32) Vector
 	fmt.Stringer
 }
 
 // Make creates a vector based on a list of values
-func Make(f []float64) Vector {
+func Make(f []float32) Vector {
 	if len(f) == 3 {
 		return make3D(f)
 	}

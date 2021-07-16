@@ -10,14 +10,14 @@ import (
 
 // VectorDyn implements the dynamic (hence slow) version of the vector interface
 type vectorDyn struct {
-	cells []float64
+	cells []float32
 }
 
 // Internal 'make' function
-func makeDyn(f []float64) Vector {
+func makeDyn(f []float32) Vector {
 	var v vectorDyn
 
-	v.cells = make([]float64, len(f))
+	v.cells = make([]float32, len(f))
 	for i := range f {
 		v.cells[i] = f[i]
 	}
@@ -29,7 +29,7 @@ func makeDyn(f []float64) Vector {
 func zeroDyn(dimension int) Vector {
 	var v vectorDyn
 
-	v.cells = make([]float64, dimension)
+	v.cells = make([]float32, dimension)
 
 	return v
 }
@@ -38,9 +38,9 @@ func zeroDyn(dimension int) Vector {
 func randDyn(dimension int) Vector {
 	var v vectorDyn
 
-	v.cells = make([]float64, dimension)
+	v.cells = make([]float32, dimension)
 	for i := range v.cells {
-		v.cells[i] = rand.Float64()
+		v.cells[i] = rand.Float32()
 	}
 
 	return v
@@ -53,22 +53,26 @@ func (v vectorDyn) Unit() Vector {
 
 // Abs provides the euclidian lenth of a vector
 // That's how mathematicians specify the absolute value of a vector
-func (v vectorDyn) Abs() float64 {
+func (v vectorDyn) Abs() float32 {
 
-	l := 0.0
+	l := float64(0.0)
 	for i := 0; i < v.Len(); i++ {
-		l += math.Pow(v.Get(i), 2)
+		l += float64(v.Get(i) * v.Get(i))
 	}
 
-	return math.Sqrt(l)
+	return float32(math.Sqrt(l))
 }
 
 // Cbd provides the city-block-distance length of a vector
-func (v vectorDyn) Cbd() float64 {
-	var l float64
+func (v vectorDyn) Cbd() float32 {
+	var l float32
 
 	for i := 0; i < v.Len(); i++ {
-		l += math.Abs(v.Get(i))
+		if v.Get(i) > 0 {
+			l += v.Get(i)
+		} else {
+			l -= v.Get(i)
+		}
 	}
 
 	return l
@@ -110,13 +114,17 @@ func (v vectorDyn) Min(w Vector) Vector {
 
 	r := Zero(v.Len())
 	for i := 0; i < r.Len(); i++ {
-		r = r.Set(i, math.Min(v.Get(i), w.Get(i)))
+		if v.Get(i) < w.Get(i) {
+			r = r.Set(i, v.Get(i))
+		} else {
+			r = r.Set(i, w.Get(i))
+		}
 	}
 
 	return r
 }
 
-// MinD provides the index of the smallest value in the vector
+// MinD provides the index of the smallest value in t he vector
 func (v vectorDyn) MinD() int {
 
 	r := 0
@@ -138,7 +146,11 @@ func (v vectorDyn) Max(w Vector) Vector {
 
 	r := Zero(v.Len())
 	for i := 0; i < r.Len(); i++ {
-		r = r.Set(i, math.Max(v.Get(i), w.Get(i)))
+		if v.Get(i) > w.Get(i) {
+			r = r.Set(i, v.Get(i))
+		} else {
+			r = r.Set(i, w.Get(i))
+		}
 	}
 
 	return r
@@ -159,7 +171,7 @@ func (v vectorDyn) MaxD() int {
 }
 
 // Muls multiplies a vector by a scalar.
-func (v vectorDyn) Muls(s float64) Vector {
+func (v vectorDyn) Muls(s float32) Vector {
 
 	r := Zero(v.Len())
 	for i := 0; i < r.Len(); i++ {
@@ -170,7 +182,7 @@ func (v vectorDyn) Muls(s float64) Vector {
 }
 
 // Divs divides a vector by a scalar.
-func (v vectorDyn) Divs(s float64) Vector {
+func (v vectorDyn) Divs(s float32) Vector {
 
 	r := Zero(v.Len())
 	for i := 0; i < r.Len(); i++ {
@@ -186,12 +198,12 @@ func (v vectorDyn) Len() int {
 }
 
 // Raw retrieves the values of the vector as a slice
-func (v vectorDyn) Raw() []float64 {
+func (v vectorDyn) Raw() []float32 {
 	return v.cells
 }
 
 // Get retrieves the value of a single cell
-func (v vectorDyn) Get(i int) float64 {
+func (v vectorDyn) Get(i int) float32 {
 	if (i < 0) || (i >= len(v.cells)) {
 		log.Fatalf("Vector.Get: Index out of bounds")
 	}
@@ -200,7 +212,7 @@ func (v vectorDyn) Get(i int) float64 {
 }
 
 // Set changes the value of a single cell
-func (v vectorDyn) Set(i int, f float64) Vector {
+func (v vectorDyn) Set(i int, f float32) Vector {
 	if (i < 0) || (i >= len(v.cells)) {
 		log.Fatalf("Vector.Set: Index out of bounds")
 	}
@@ -218,7 +230,7 @@ func (v vectorDyn) String() string {
 		if i > 0 {
 			s.WriteString(", ")
 		}
-		s.WriteString(strconv.FormatFloat(f, 'f', 3, 64))
+		s.WriteString(strconv.FormatFloat(float64(f), 'f', 3, 64))
 	}
 	s.WriteString("]")
 
